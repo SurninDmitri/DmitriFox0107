@@ -2,40 +2,45 @@ name: Docker Build and Test
 
 on:
   push:
-    branches: [ master ] # Замените на имя вашей основной ветки, если она отличается
+    branches: [ master ]
   pull_request:
-    branches: [ master ] # Замените на имя вашей основной ветки, если она отличается
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-      - name: Build and Tag Docker image
-        run: |
-          docker build -t my-app-image:latest .
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
 
-      - name: Run Docker Compose
-        run: |
-          docker-compose up -d
+    - name: Build and Tag Docker image
+      run: |
+        docker build -t my-app-image:latest .
 
-      - name: Wait for database to be ready
-        run: |
-          sleep 30 # Wait for 30 seconds for the database to start
+    - name: Run Docker Compose
+      run: |
+        docker-compose up -d
 
-      - name: Run tests (Optional)
-        run: |
-          # Add your test commands here
-          # Example: python -m unittest discover -s tests
-          # Example: pytest
+    - name: Wait for database to be ready
+      run: |
+        sleep 30 # Wait for 30 seconds for the database to start
 
-      - name: Stop Docker Compose
-        if: always()
-        run: |
-          docker-compose down
+    - name: Run tests (Optional)
+      run: |
+        # Add your test commands here
+        # Example: python -m unittest discover -s tests
+        # Example: pytest
+
+    - name: Stop Docker Compose
+      if: always()
+      run: |
+        docker-compose down
