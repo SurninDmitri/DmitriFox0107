@@ -1,0 +1,42 @@
+#version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=1
+      # Переменные окружения для подключения к базе данных (лучше использовать .env файл)
+      - SERVER=DESKTOP-9LNU1S0\SQLEXPRESS # Замените на адрес вашего SQL Server
+      - DATABASE=devops # Замените на имя вашей базы данных
+      - DRIVER={ODBC Driver 17 for SQL Server}
+      # Для Windows Authentication раскомментируйте и уберите SERVER, DATABASE, DRIVER
+      # - TRUSTED_CONNECTION=yes
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest # Или другую версию
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrongPassword1! # Замените на надежный пароль для пользователя SA
+      # Если нужно, добавьте другие переменные окружения, например, для создания базы данных при старте
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - app-network
+
+volumes:
+  sqlserver-data:
+
+networks:
+  app-network:
+    driver: bridge

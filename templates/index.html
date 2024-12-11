@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Простое веб-приложение (SQL Server)</title>
+</head>
+<body>
+    <h1>Список предметов</h1>
+    <ul>
+        {% for item in items %}
+            <li>{{ item.name }}: {{ item.description }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Добавить предмет</h2>
+    <form method="POST" action="/add">
+        <label for="name">Название:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="description">Описание:</label><br>
+        <textarea id="description" name="description"></textarea><br>
+        <button type="submit">Добавить</button>
+    </form>
+</body>
+</html>
