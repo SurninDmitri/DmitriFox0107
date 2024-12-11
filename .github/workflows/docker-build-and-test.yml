@@ -1,0 +1,41 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches: [ master ] # Замените на имя вашей основной ветки, если она отличается
+  pull_request:
+    branches: [ master ] # Замените на имя вашей основной ветки, если она отличается
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and Tag Docker image
+        run: |
+          docker build -t my-app-image:latest .
+
+      - name: Run Docker Compose
+        run: |
+          docker-compose up -d
+
+      - name: Wait for database to be ready
+        run: |
+          sleep 30 # Wait for 30 seconds for the database to start
+
+      - name: Run tests (Optional)
+        run: |
+          # Add your test commands here
+          # Example: python -m unittest discover -s tests
+          # Example: pytest
+
+      - name: Stop Docker Compose
+        if: always()
+        run: |
+          docker-compose down
